@@ -1,0 +1,115 @@
+version: '3.7'
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: es01
+    volumes:
+      #- type: bind
+      #  source: ./elastic-stack-ca.p12
+      #  target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
+      #  read_only: true
+      - type: volume
+        source: elasticsearch1
+        target: /usr/share/elasticsearch/data
+    environment:
+      - node.name=es01
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=password
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: es02
+    volumes:
+      #- type: bind
+      #  source: ./elastic-stack-ca.p12
+      #  target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
+      #  read_only: true
+      - type: volume
+        source: elasticsearch2
+        target: /usr/share/elasticsearch/data
+    environment:
+      - node.name=es02
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=password  
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elastic
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    container_name: es03
+    volumes:
+      #- type: bind
+      #  source: ./elastic-stack-ca.p12
+      #  target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
+      #  read_only: true
+      - type: volume
+        source: elasticsearch3
+        target: /usr/share/elasticsearch/data
+    environment:
+      - node.name=es03
+      - cluster.name=docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=password
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elastic
+
+  kibana:
+    image: kibana:7.9.2
+    container_name: kibana
+    ports:
+      - '5601:5601'
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elastic
+ 
+  logstash:
+    image: logstash:7.9.2
+    container_name: logstash
+    ports:
+      - '5000:5000'
+    #volumes:
+    #  - type: bind
+    #    source: ./logstash_pipeline/
+    #    target: /usr/share/logstash/pipeline
+    #    read_only: true
+    networks:
+      - elastic
+networks:
+  elastic:
+    driver: bridge
+
+volumes:
+  elasticsearch1:
+  elasticsearch2:
+  elasticsearch3:
