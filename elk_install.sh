@@ -19,8 +19,8 @@ cho "* soft nofile 65535" | tee -a /etc/security/limits.conf
 git clone https://github.com/GilesFa/docker-elk.git
 #-----------------------啟動docker-compose-------------------------#
 docker-compose -f /root/docker-elk/docker-compose.yml up -d
-echo "watting for 120 seconds..."
-/usr/bin/sleep 120
+echo "watting for 180 seconds..."
+/usr/bin/sleep 180
 echo "check elasticsearch cluster status"
 curl http://elastic:password@127.0.0.1:9200
 curl http://elastic:password@127.0.0.1:9200/_cat/nodes
