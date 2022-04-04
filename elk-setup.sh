@@ -27,6 +27,7 @@ echo "* soft memlock unlimited" | tee -a /etc/security/limits.conf
 echo "* hard memlock unlimited" | tee -a /etc/security/limits.conf
 echo "* soft nofile 65535" | tee -a /etc/security/limits.conf
 #-----------------------啟動docker-compose-------------------------#
+#取得.env檔案內的ELASTIC_PASSWORD變數
 ELASTIC_PASSWORD=`cat /root/docker-elk/.env | awk -F '=' '{print $2}'`
 ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 docker-compose -f /root/docker-elk/docker-compose-nossl.yml up -d
@@ -131,8 +132,8 @@ EOF
 #------------------------再次檢查叢集狀態-------------------------#
 echo "watting for 5 seconds..."
 /usr/bin/sleep 5
-curl http://elastic:password@127.0.0.1:9200
-curl http://elastic:password@127.0.0.1:9200/_cat/nodes
+curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200
+curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
 
 #-----------------------啟動有ssl設定的docker-compose-------------------------
 docker-compose -f  /root/docker-elk/docker-compose-nossl.yml down
@@ -140,5 +141,5 @@ docker-compose -f /root/docker-elk/docker-compose-ssl.yml up -d
 echo "watting 60 seconds for elasticsearch cluster ready..."
 /usr/bin/sleep 60
 #------------------------再次檢查叢集狀態-------------------------#
-curl http://elastic:password@127.0.0.1:9200
-curl http://elastic:password@127.0.0.1:9200/_cat/nodes
+curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200
+curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
