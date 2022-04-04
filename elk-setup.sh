@@ -29,6 +29,7 @@ echo "* soft nofile 65535" | tee -a /etc/security/limits.conf
 #-----------------------啟動docker-compose-------------------------#
 #取得.env檔案內的ELASTIC_PASSWORD變數
 ELASTIC_PASSWORD=`cat /root/docker-elk/.env |grep ELASTIC | awk -F '=' '{print $2}'`
+#KIBANA_PASSWORD=`cat /root/docker-elk/.env |grep KIBANA | awk -F '=' '{print $2}'`
 ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 docker-compose -f /root/docker-elk/docker-compose-nossl.yml up -d
 echo "watting 120 seconds for elasticsearch cluster ready..."
@@ -49,7 +50,7 @@ curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
     expect eof
 EOF
 
-/usr/bin/sleep 3
+/usr/bin/sleep 10
 
 #利用elastic-stack-ca.p12產生ssl憑證elastic-certificates.p12
 #docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-certutil cert -ca /usr/share/elasticsearch/elastic-stack-ca.p12
@@ -67,7 +68,7 @@ EOF
     expect eof
 EOF
 
-/usr/bin/sleep 3
+/usr/bin/sleep 10
 
 #將ca憑證複製到本地
 docker cp es01:usr/share/elasticsearch/elastic-certificates.p12 /root/docker-elk/
@@ -138,8 +139,8 @@ curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
 #-----------------------啟動有ssl設定的docker-compose-------------------------
 docker-compose -f  /root/docker-elk/docker-compose-nossl.yml down
 docker-compose -f /root/docker-elk/docker-compose-ssl.yml up -d
-echo "watting 90 seconds for elasticsearch cluster ready..."
-/usr/bin/sleep 90
+echo "watting 120 seconds for elasticsearch cluster ready..."
+/usr/bin/sleep 120
 #------------------------再次檢查叢集狀態-------------------------#
 curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200
 curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
