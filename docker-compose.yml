@@ -4,13 +4,13 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
     container_name: es01
     volumes:
-      #- type: bind
-      #  source: ./elastic-stack-ca.p12
-      #  target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
-      #  read_only: true
+      # - type: bind
+      #   source: ./elastic-stack-ca.p12
+      #   target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
+      #   read_only: true
       - type: volume
         source: elasticsearch1
-        target: /usr/share/elasticsearch/data
+        target: /usr/share/elasticsearch
     environment:
       - node.name=es01
       - cluster.name=docker-cluster
@@ -18,6 +18,10 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - xpack.security.enabled=true
+      #- xpack.security.transport.ssl.enabled=true
+      # - xpack.security.transport.ssl.verification_mode=none
+      # - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/elastic-stack-ca.p12
+      # - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/elastic-stack-ca.p12
       - ELASTIC_PASSWORD=password
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
@@ -26,6 +30,8 @@ services:
         hard: -1
     ports:
       - 9200:9200
+      - 9300:9300
+    restart: always
     networks:
       - elastic
 
@@ -33,13 +39,13 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
     container_name: es02
     volumes:
-      #- type: bind
-      #  source: ./elastic-stack-ca.p12
-      #  target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
-      #  read_only: true
+      # - type: bind
+      #   source: ./elastic-stack-ca.p12
+      #   target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
+      #   read_only: true
       - type: volume
         source: elasticsearch2
-        target: /usr/share/elasticsearch/data
+        target: /usr/share/elasticsearch
     environment:
       - node.name=es02
       - cluster.name=docker-cluster
@@ -47,12 +53,17 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - xpack.security.enabled=true
-      - ELASTIC_PASSWORD=password  
+      #- xpack.security.transport.ssl.enabled=true
+      # - xpack.security.transport.ssl.verification_mode=none
+      # - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/elastic-stack-ca.p12
+      # - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/elastic-stack-ca.p12
+      - ELASTIC_PASSWORD=password
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    restart: always
     networks:
       - elastic
 
@@ -60,13 +71,13 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
     container_name: es03
     volumes:
-      #- type: bind
-      #  source: ./elastic-stack-ca.p12
-      #  target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
-      #  read_only: true
+      # - type: bind
+      #   source: ./elastic-stack-ca.p12
+      #   target: /usr/share/elasticsearch/config/elastic-stack-ca.p12
+      #   read_only: true
       - type: volume
         source: elasticsearch3
-        target: /usr/share/elasticsearch/data
+        target: /usr/share/elasticsearch
     environment:
       - node.name=es03
       - cluster.name=docker-cluster
@@ -74,12 +85,17 @@ services:
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
       - xpack.security.enabled=true
+      #- xpack.security.transport.ssl.enabled=true
+      # - xpack.security.transport.ssl.verification_mode=none
+      # - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/elastic-stack-ca.p12
+      # - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/elastic-stack-ca.p12
       - ELASTIC_PASSWORD=password
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    restart: always
     networks:
       - elastic
 
@@ -90,6 +106,7 @@ services:
       - '5601:5601'
     volumes:
       - /root/docker-elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+    restart: always
     networks:
       - elastic
  
@@ -103,6 +120,7 @@ services:
     #    source: ./logstash_pipeline/
     #    target: /usr/share/logstash/pipeline
     #    read_only: true
+    restart: always    
     networks:
       - elastic
 networks:
