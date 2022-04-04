@@ -28,7 +28,7 @@ echo "* hard memlock unlimited" | tee -a /etc/security/limits.conf
 echo "* soft nofile 65535" | tee -a /etc/security/limits.conf
 #-----------------------啟動docker-compose-------------------------#
 #取得.env檔案內的ELASTIC_PASSWORD變數
-ELASTIC_PASSWORD=`cat /root/docker-elk/.env | awk -F '=' '{print $2}'`
+ELASTIC_PASSWORD=`cat /root/docker-elk/.env |grep ELASTIC | awk -F '=' '{print $2}'`
 ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 docker-compose -f /root/docker-elk/docker-compose-nossl.yml up -d
 echo "watting 120 seconds for elasticsearch cluster ready..."
