@@ -104,8 +104,14 @@ services:
     container_name: kibana
     ports:
       - '5601:5601'
-    volumes:
-      - /root/docker-elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+    # volumes:
+    #   - /root/docker-elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+    environment:
+      - SERVERNAME=kibana
+      - SERVERHOST=0.0.0.0
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
     restart: always
     networks:
       - elastic
