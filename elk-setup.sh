@@ -3,7 +3,7 @@
 yum install tcl expect -y
 #------------------------git clone elk repo-------------------------#
 #偵測/root目錄下是否有docker-elk目錄，若沒有則進行git clone 下載
-if [ -f "/root/docker-elk" ]; then
+if [ -d "/root/docker-elk" ]; then
     # 目錄/root/docker-elk 存在
     echo "/root/docker-elk exists."
 else
@@ -27,13 +27,14 @@ echo "* soft memlock unlimited" | tee -a /etc/security/limits.conf
 echo "* hard memlock unlimited" | tee -a /etc/security/limits.conf
 echo "* soft nofile 65535" | tee -a /etc/security/limits.conf
 #-----------------------啟動docker-compose-------------------------#
-password = password
+ELASTIC_PASSWORD=`cat /root/docker-elk/.env | awk -F '=' '{print $2}'`
+ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
 docker-compose -f /root/docker-elk/docker-compose-nossl.yml up -d
 echo "watting 120 seconds for elasticsearch cluster ready..."
 /usr/bin/sleep 120
 echo "check elasticsearch cluster status..."
-curl http://elastic:$password@127.0.0.1:9200
-curl http://elastic:$password@127.0.0.1:9200/_cat/nodes
+curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200
+curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
 #------------------------設定cluster認證-------------------------#
 #產生elastic-stack-ca.p12
 #docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-certutil ca
@@ -111,18 +112,18 @@ docker exec -it es03 chown elasticsearch:root /usr/share/elasticsearch/config/el
     spawn docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-setup-passwords interactive
     expect {
             "Please*" { send "y\r"; exp_continue }
-            "Enter*" { send "$password\r"; exp_continue}
-            "Reenter*]:" { send "$password\r"; exp_continue}
-            "Enter*" { send "$password\r"; exp_continue}
-            "Reenter*]:" { send "$password\r"; exp_continue}
-            "Enter*" { send "$password\r"; exp_continue}
-            "Reenter*]:" { send "password\r"; exp_continue}
-            "Enter*" { send "$password\r"; exp_continue}
-            "Reenter*]:" { send "$password\r"; exp_continue}
-            "Enter*" { send "$password\r"; exp_continue}
-            "Reenter*]:" { send "$password\r"; exp_continue}
-            "Enter*" { send "$password\r"; exp_continue}
-            "Reenter*]:" { send "$password\r"}
+            "Enter*" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Reenter*]:" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Enter*" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Reenter*]:" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Enter*" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Reenter*]:" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Enter*" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Reenter*]:" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Enter*" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Reenter*]:" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Enter*" { send "${ELASTIC_PASSWORD}\r"; exp_continue}
+            "Reenter*]:" { send "${ELASTIC_PASSWORD}\r"}
     }
     expect eof
 EOF
