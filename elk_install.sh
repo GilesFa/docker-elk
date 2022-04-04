@@ -9,18 +9,17 @@ echo "vm.max_map_count = 262144"| tee -a /etc/sysctl.conf
 #套用Kernel參數
 sysctl -p
 #調整使用者檔案限制，檔案/etc/security/limits.conf
-cho "* soft nofile 65535" | tee -a /etc/security/limits.conf
-cho "* hard nofile 65535" | tee -a /etc/security/limits.conf
-cho "* soft memlock unlimited" | tee -a /etc/security/limits.conf
-cho "* hard memlock unlimited" | tee -a /etc/security/limits.con
-f
-cho "* soft nofile 65535" | tee -a /etc/security/limits.conf
+echo "* soft nofile 65535" | tee -a /etc/security/limits.conf
+echo "* hard nofile 65535" | tee -a /etc/security/limits.conf
+echo "* soft memlock unlimited" | tee -a /etc/security/limits.conf
+echo "* hard memlock unlimited" | tee -a /etc/security/limits.conf
+echo "* soft nofile 65535" | tee -a /etc/security/limits.conf
 #------------------------git clone elk repo-------------------------#
-git clone https://github.com/GilesFa/docker-elk.git
+# git clone https://github.com/GilesFa/docker-elk.git
 #-----------------------啟動docker-compose-------------------------#
 docker-compose -f /root/docker-elk/docker-compose.yml up -d
-echo "watting for 180 seconds..."
-/usr/bin/sleep 180
+echo "watting for 120 seconds..."
+/usr/bin/sleep 120
 echo "check elasticsearch cluster status"
 curl http://elastic:password@127.0.0.1:9200
 curl http://elastic:password@127.0.0.1:9200/_cat/nodes
