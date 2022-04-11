@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
     container_name: es01
     volumes:
       # - type: bind
@@ -36,7 +36,7 @@ services:
       - elastic
 
   es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
     container_name: es02
     volumes:
       # - type: bind
@@ -68,7 +68,7 @@ services:
       - elastic
 
   es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
     container_name: es03
     volumes:
       # - type: bind
@@ -100,7 +100,7 @@ services:
       - elastic
 
   kibana:
-    image: kibana:7.9.2
+    image: kibana:${ELK_VERSION}
     container_name: kibana
     ports:
       - '5601:5601'
@@ -111,13 +111,13 @@ services:
       - SERVERHOST=0.0.0.0
       - ELASTICSEARCH_HOSTS=http://es01:9200
       - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
     restart: always
     networks:
       - elastic
  
 #  logstash:
-#    image: logstash:7.9.2
+#    image: logstash:${ELK_VERSION}
 #    container_name: logstash
 #    ports:
 #      - '5000:5000'
