@@ -139,8 +139,8 @@ curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
 #-----------------------啟動有ssl設定的docker-compose-------------------------
 docker-compose -f  /root/docker-elk/docker-compose-nossl.yml down
 docker-compose -f /root/docker-elk/docker-compose-ssl.yml up -d
-echo "watting 120 seconds for elasticsearch cluster ready..."
-/usr/bin/sleep 120
+echo "watting 180 seconds for elasticsearch cluster ready..."
+/usr/bin/sleep 180
 #------------------------再次檢查叢集狀態-------------------------#
 curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200
 curl http://elastic:${ELASTIC_PASSWORD}@127.0.0.1:9200/_cat/nodes
