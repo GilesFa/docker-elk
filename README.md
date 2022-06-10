@@ -1,4 +1,5 @@
 # docker-elk
+#此專案將會自動建立3節點的docker elasticsearch + 
 #運行步驟:
 1.  cd ~
 2.  git clone https://github.com/GilesFa/docker-elk.git
